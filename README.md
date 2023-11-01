@@ -13,8 +13,9 @@ After gathering movie data, the project employs the OPENAI API to embed movie de
 To get started with the Similar Movies API, follow these basic steps:
 
 1. Clone the repository to your local machine.
-
+<pre>
 git clone https://github.com/andriangashper/similar-movies-api.git
+</pre>
 
 2. Configure Environmental Variables:
 
@@ -33,14 +34,16 @@ Populate these variables with your API keys and database credentials.
 3. Build the Docker Image:
 
 Build the Docker image using the provided Dockerfile.
-
+<pre>
 docker build -t similar-movies-api .
+</pre>
 
 4. Run the Docker Container:
 
 Start the Docker container to run the API.
-
+<pre>
 docker run -p 8000:8000 similar-movies-api
+</pre>
 
 5. Access the API:
 
