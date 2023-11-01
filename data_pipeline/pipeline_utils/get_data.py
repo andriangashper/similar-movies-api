@@ -1,6 +1,6 @@
 import requests
-from .logging_config import configure_logger
 from pprint import pprint
+from .logging_config import configure_logger
 from .variables import THEMOVIEDB_API_ACCESS_TOKEN
 
 
@@ -59,5 +59,6 @@ def get_genres_data():
 
 
 if __name__ == "__main__":
+    
     pprint(get_movies_data(page=1, primary_release_year=2023))
     pprint(get_genres_data())

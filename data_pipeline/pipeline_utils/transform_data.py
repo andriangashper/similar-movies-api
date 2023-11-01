@@ -2,10 +2,10 @@ import string
 import numpy as np
 import tiktoken
 import openai
-from .variables import OPENAI_API_KEY, GENRES_DICT, RAW_MOVIES_DATA_EXAMPLE
-from pprint import pprint
-from .logging_config import configure_logger
 import traceback
+from pprint import pprint
+from .variables import OPENAI_API_KEY, GENRES_DICT, RAW_MOVIES_DATA_EXAMPLE
+from .logging_config import configure_logger
 
 
 logger = configure_logger(__name__)
@@ -28,7 +28,8 @@ def vectorize_text_with_categories(text, categories, all_categories):
     openai.api_key = OPENAI_API_KEY
     
     text = preprocess_text(text)
-    # print(num_tokens_from_string(text))
+    logger.debug(num_tokens_from_string(text))
+
     try:
         embeddings = openai.Embedding.create(input=[text], model="text-embedding-ada-002")["data"][0]["embedding"] 
         genre_vector = [1 if cat in categories else 0 for cat in all_categories] 
@@ -36,8 +37,9 @@ def vectorize_text_with_categories(text, categories, all_categories):
 
     except Exception as e:
         logger.info(f"Error vectorizing movie description:\n{e}")
-        # traceback_str = traceback.format_exc()
-        # logger.info(traceback_str)
+        traceback_str = traceback.format_exc()
+        logger.debug(traceback_str)
+
         combined_vector = []
 
     return combined_vector
@@ -68,6 +70,7 @@ def transform_movies_data(raw_movies_data, genres_dict):
 
 
 if __name__ == "__main__":
+    
     movies_data_list = transform_movies_data(RAW_MOVIES_DATA_EXAMPLE, GENRES_DICT)
     for movie_data in movies_data_list:
         movie_data["vectorized_description"] = movie_data["vectorized_description"][:20]

@@ -4,23 +4,9 @@ The Similar Movies API is a project that allows you to discover movies that are 
 
 ## Overview
 
-The API utilizes the THEMOVIEDB API to retrieve information about movies. It filters movies in English with a satisfactory grade and vote count, excluding those released before 1980.
+The API utilizes the THEMOVIEDB API (https://api.themoviedb.org) to retrieve information about movies. It filters movies in English with a satisfactory grade and vote count, excluding those released before 1980.
 
 After gathering movie data, the project employs the OPENAI API to embed movie descriptions into vector representations. This data is subsequently loaded into a PostgreSQL database.
-
-## Usage
-
-To use this API, you need to configure the following environmental variables in a .env file:
-
-- `THEMOVIEDB_API_KEY`
-- `THEMOVIEDB_API_ACCESS_TOKEN`
-- `PGDBUSERNAME`
-- `PGDBPWD`
-- `PGDBNAME`
-- `PGDBHOSTPORT`
-- `OPENAI_API_KEY`
-
-Once the environmental variables are configured, you can create a Docker image and run the API. During the initial run, the database will be populated with a large amount of movie data, which may take some time. However, subsequent runs should be faster.
 
 ## Getting Started
 

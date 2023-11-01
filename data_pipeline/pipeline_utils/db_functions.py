@@ -52,4 +52,4 @@ def query_db(session, query):
 
 
 if __name__ == "__main__":
-    print("TEST")
+    logger.info("TEST")

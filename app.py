@@ -29,7 +29,7 @@ def calls_on_startup():
 def update_movies_inmemory_data():
     timeout = 604800
     try:
-        # run_db_pipeline.update_movies_table_pipeline()
+        run_db_pipeline.update_movies_table_pipeline()
 
         movies_raw_data = get_data.get_movies_table_data()
         similarity_matrix = mod_data.similarity_matrix_between_movies(movies_raw_data)
@@ -94,7 +94,6 @@ def get_topn_similar_movies():
         if movies_raw_data and input_text and n:
             topn_similar_movies = mod_data.topn_similar_movies_to_input(input_text, movies_raw_data, n)
 
-            # Check the 'Accept' header to determine the response format
             if 'application/json' in request.headers.get('Accept'):
                 return jsonify({"data": topn_similar_movies}), 200
             else:

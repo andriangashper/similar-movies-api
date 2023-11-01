@@ -1,10 +1,10 @@
 import numpy as np
-from .get_data import vectorize_text, get_movies_vector_matrix, get_movies_table_data
-from .variables import NODES_DATA_COLUMNS, MIN_COS_SIM_SCORE
 from scipy import spatial
-from .logging_config import configure_logger
 from sys import getsizeof
 import time
+from .get_data import vectorize_text, get_movies_vector_matrix, get_movies_table_data
+from .variables import NODES_DATA_COLUMNS, MIN_COS_SIM_SCORE
+from .logging_config import configure_logger
 
 logger = configure_logger(__name__)
 
