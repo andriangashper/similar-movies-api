@@ -1,18 +1,16 @@
-from math import floor
-from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker
-from data.logging_config import configure_logger
-from data import get_data
-from data import transform_data
-from data import db_functions
 from datetime import date
 import traceback
-from data.variables import \
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from data_pipeline.pipeline_utils.logging_config import configure_logger
+from data_pipeline.pipeline_utils import get_data
+from data_pipeline.pipeline_utils import transform_data
+from data_pipeline.pipeline_utils import db_functions
+from data_pipeline.pipeline_utils.variables import \
     PGDBNAME, PGDBPWD, PGDBUSERNAME, PGDBHOSTPORT, \
     SQL_QUERY_MOVIE_IDS_MAX_YEAR, \
     GENRES_DICT, \
     MAX_MOVIES_TO_INSERT_PER_RUN, \
-    MAX_MOVIES_PER_PAGE, \
     MIN_MOVIE_YEAR, \
     MAX_GETMOVIE_PAGE
 
@@ -51,7 +49,7 @@ def update_movies_table_pipeline():
         len_max_year_movie_ids = len(max_year_movie_ids)
         logger.info(f"{len_max_year_movie_ids} movies found in Database for max year {max_year}")
 
-        page = 1  # max(int(floor(len_max_year_movie_ids/MAX_MOVIES_PER_PAGE)), 2) - 1
+        page = 1 
         total_movies_inserted = 0
 
         for year in range(max_year, current_year+1):
@@ -97,4 +95,3 @@ def update_movies_table_pipeline():
 
 if __name__ == "__main__":
     update_movies_table_pipeline()
-    # print("TEST")

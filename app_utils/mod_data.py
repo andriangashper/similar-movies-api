@@ -25,7 +25,10 @@ def topn_similar_movies_to_input(input_text, movies_raw_data, n):
 
     logger.info(f"Topn similar movies function was triggered. It returned {len(indexes_of_topn_similar_movies)} movies")
 
-    return [{key:movies_raw_data[i][key] for key in movies_raw_data[i] if key in NODES_DATA_COLUMNS}|{"cos_sim":indexed_cos_similarities[i][1]} for i in indexes_of_topn_similar_movies]
+    return [{key:movies_raw_data[i][key] 
+             for key in movies_raw_data[i] if key in NODES_DATA_COLUMNS}|
+             {"cos_sim":round(indexed_cos_similarities[i][1],2)} 
+             for i in indexes_of_topn_similar_movies]
 
 
 def similarity_matrix_between_movies(movies_raw_data):
@@ -45,7 +48,7 @@ def similarity_matrix_between_movies(movies_raw_data):
 def get_movies_network_edges(movies_raw_data, similarity_matrix):
     idx_i, idx_j = np.where(similarity_matrix > MIN_COS_SIM_SCORE)
 
-    edges = [{"from": movies_raw_data[i]["id"], "to": movies_raw_data[j]["id"], "cos_sim":similarity_matrix[i,j]} \
+    edges = [{"from": movies_raw_data[i]["id"], "to": movies_raw_data[j]["id"], "cos_sim":round(similarity_matrix[i,j],2)} \
              for i, j in zip(idx_i, idx_j)]
     
     logger.info(f"Generated {len(edges):,} network edges, and size: {round(getsizeof(edges)/1000000,2)} MB")
@@ -68,6 +71,17 @@ def get_filtered_movies_network_nodes_and_edges(movies_raw_data, edges, movie_id
     nodes = get_movies_network_nodes(movies_raw_data, edges)
 
     return nodes, edges
+
+
+def get_top_n_similar_movies_to_movie_id(movie_id, filtered_nodes, filtered_edges, top_n):
+
+    similarity_dict = similarity_dict = {edge["from"] if edge["from"] != movie_id else edge["to"]: edge["cos_sim"] for edge in filtered_edges}
+
+    nodes = [node | {"cos_sim" : similarity_dict[node["id"]]} for node in filtered_nodes if node["id"] != movie_id] 
+
+    nodes  = sorted(nodes, key = lambda x: x["cos_sim"], reverse=True)
+
+    return nodes[:top_n]                         
 
 
 def time_function(function, *args):

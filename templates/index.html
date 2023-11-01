@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Similar Movies API</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <header>
+        <h1>Similar Movies API</h1>
+    </header>
+    <div class="container">
+        <div class="input-container">
+            <form method="GET" action="/movies/nsimilar_movies">
+                <label for="input_text">Enter Movie Description:</label>
+                <input type="text" id="input_text" name="input_text" placeholder="Movie Description">
+                <label for="n">Number of Movies:</label>
+                <input type="number" id="n" name="n" min="1" value="5"><br>
+                <button type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

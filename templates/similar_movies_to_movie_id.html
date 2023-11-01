@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Similar Movies API</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <header>
+        <h1>Similar Movies API</h1>
+    </header>
+    <div class="container">
+        <div class="result-container">
+            <h2>Top Similar Movies:</h2>
+            <ul>
+                {% if data %}
+                    {% for movie in data %}
+                        <li>
+                            <strong><a href="{{ url_for('get_similar_movies_to_movie_id', movie_id=movie.id) }}">{{ movie.name }}</a></strong><br>
+                            Description: {{ movie.description }}<br>
+                            Vote/Grade: {{ movie.vote }}<br>
+                            Year: {{ movie.year }}<br>
+                            Genres: {{ movie.genres }}<br>
+                            Cosine: {{ movie.cos_sim }}
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <p>Error: Similar movies data not available</p>
+                {% endif %}
+            </ul>
+            
+            <a href="/">Home</a>
+        </div>
+    </div>
+</body>
+</html>

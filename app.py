@@ -1,7 +1,10 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_caching import Cache
 from flask_cors import CORS
-from data import get_data, mod_data
+from app_utils import get_data, mod_data
+from data_pipeline import run_db_pipeline
+import requests
+
 
 app = Flask(__name__)
 CORS(app)
@@ -15,10 +18,19 @@ def update_and_cache_data(cache, key, data, timeout):
     cache.set(key, data, timeout = timeout)
 
 
+def calls_on_startup():
+    with app.test_client() as client:
+        response = client.post("/movies/update_data")
+        print(response.data)
+
+
+
 @app.route("/movies/update_data", methods = ["POST"])
 def update_movies_inmemory_data():
     timeout = 604800
     try:
+        # run_db_pipeline.update_movies_table_pipeline()
+
         movies_raw_data = get_data.get_movies_table_data()
         similarity_matrix = mod_data.similarity_matrix_between_movies(movies_raw_data)
         edges = mod_data.get_movies_network_edges(movies_raw_data, similarity_matrix)
@@ -32,6 +44,28 @@ def update_movies_inmemory_data():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+
+
+@app.route("/movies/graph_data/<int:movie_id>", methods = ["GET"])
+def get_similar_movies_to_movie_id(movie_id):
+
+    response = requests.get(f"http://{request.host}/movies/graph_data?movie_id={movie_id}")
+    
+    if response.status_code == 200:
+        data = response.json()
+        data = mod_data.get_top_n_similar_movies_to_movie_id(movie_id, data.get("nodes"), data.get("edges"), 10)
+
+        return render_template("similar_movies_to_movie_id.html", data=data)
+    else:
+        return "Error fetching similar movies data"
+
 
 
 @app.route("/movies/graph_data", methods = ["GET"])
@@ -49,6 +83,7 @@ def get_movies_graph_data():
         return jsonify({"error": "Variables not available."}), 404
 
 
+
 @app.route("/movies/nsimilar_movies", methods = ["GET"])
 def get_topn_similar_movies():
     try:
@@ -58,20 +93,25 @@ def get_topn_similar_movies():
 
         if movies_raw_data and input_text and n:
             topn_similar_movies = mod_data.topn_similar_movies_to_input(input_text, movies_raw_data, n)
-            return jsonify({"data":topn_similar_movies}), 200
-        
+
+            # Check the 'Accept' header to determine the response format
+            if 'application/json' in request.headers.get('Accept'):
+                return jsonify({"data": topn_similar_movies}), 200
+            else:
+                return render_template("nsimilar_movies.html", data=topn_similar_movies)
+
         else:
-            return jsonify({"error": "Variables not available."}), 404
-    
+            if 'application/json' in request.headers.get('Accept'):
+                return jsonify({"error": "Variables not available."}), 404
+            else:
+                return render_template("nsimilar_movies.html", error="Variables not available.")
+
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        if 'application/json' in request.headers.get('Accept'):
+            return jsonify({"error": str(e)}), 500
+        else:
+            return render_template("nsimilar_movies.html", error=str(e))
 
-
-
-def calls_on_startup():
-    with app.test_client() as client:
-        response = client.post("/movies/update_data")
-        print(response.data)
 
 
 if __name__ == "__main__":
