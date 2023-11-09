@@ -18,4 +18,4 @@ MIN_MOVIE_YEAR = 1980
 
 NODES_DATA_COLUMNS = ["id", "name", "description", "vote", "vote_count", "year", "genres", "language"]
 
-MIN_COS_SIM_SCORE = 0.8
+MIN_COS_SIM_SCORE = 0.85

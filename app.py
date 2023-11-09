@@ -20,8 +20,7 @@ def update_and_cache_data(cache, key, data, timeout):
 
 def calls_on_startup():
     with app.test_client() as client:
-        response = client.post("/movies/update_data")
-        print(response.data)
+        client.post("/movies/update_data")
 
 
 
@@ -63,8 +62,9 @@ def get_similar_movies_to_movie_id(movie_id):
         data = mod_data.get_top_n_similar_movies_to_movie_id(movie_id, data.get("nodes"), data.get("edges"), 10)
 
         return render_template("similar_movies_to_movie_id.html", data=data)
+    
     else:
-        return "Error fetching similar movies data"
+        return render_template("similar_movies_to_movie_id.html", error="Error fetching similar movies data")
 
 
 
@@ -72,11 +72,13 @@ def get_similar_movies_to_movie_id(movie_id):
 def get_movies_graph_data():
     nodes = cache.get("nodes")
     edges = cache.get("edges")
-    movie_id = int(request.args.get("movie_id"))
+    movie_id = request.args.get("movie_id")
 
-    if nodes and edges and movie_id:
-        if movie_id != -1:
+    if nodes and edges:
+        if movie_id:
+            movie_id = int(movie_id)
             nodes, edges = mod_data.get_filtered_movies_network_nodes_and_edges(nodes, edges, movie_id)
+
         return jsonify({"nodes":nodes, "edges":edges}), 200
     
     else:
@@ -88,10 +90,12 @@ def get_movies_graph_data():
 def get_topn_similar_movies():
     try:
         movies_raw_data = cache.get("movies_raw_data")
-        input_text = str(request.args.get("input_text"))
-        n = max(int(request.args.get("n")),1)
+        input_text = request.args.get("input_text")
+        n = request.args.get("n")
 
         if movies_raw_data and input_text and n:
+            input_text = str(input_text)
+            n = max(int(n),1)
             topn_similar_movies = mod_data.topn_similar_movies_to_input(input_text, movies_raw_data, n)
 
             if 'application/json' in request.headers.get('Accept'):
@@ -101,9 +105,9 @@ def get_topn_similar_movies():
 
         else:
             if 'application/json' in request.headers.get('Accept'):
-                return jsonify({"error": "Variables not available."}), 404
+                return jsonify({"error": "Variables not available or 'input_text' and 'n' parameters not passed."}), 404
             else:
-                return render_template("nsimilar_movies.html", error="Variables not available.")
+                return render_template("nsimilar_movies.html", error="Variables not available or 'input_text' and 'n' parameters not passed.")
 
     except Exception as e:
         if 'application/json' in request.headers.get('Accept'):
