@@ -48,3 +48,17 @@ docker run -p 8000:8000 similar-movies-api
 5. Access the API:
 
 The API will be available at http://localhost:8000 in your web browser or by making HTTP requests.
+
+## Demo
+
+This is how the end result looks like:
+
+https://github.com/andriangashper/similar-movies-api/assets/74043093/cc45dbfa-c658-4ee3-8150-5fdc11bc0419
+
+![Screenshot 2023-11-24 062909](https://github.com/andriangashper/similar-movies-api/assets/74043093/33848dbb-683d-478b-a7e9-108f43da75fd)
+![Screenshot 2023-11-24 062949](https://github.com/andriangashper/similar-movies-api/assets/74043093/6c8e386e-c03f-49bb-a41f-c158e772a04a)
+
+## Extra
+
+If you are interested in the data only and/or do not want to go through the troubles of setting up all the credentials, you can find the dataset publicly available here:
+[Kaggle](https://www.kaggle.com/datasets/gasperandrian/movies-data-with-vectorized-description)
